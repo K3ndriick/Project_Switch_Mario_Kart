@@ -1,5 +1,4 @@
 // Commented out the homeButton functionality, the joystick works as intended with this version of code. 
-
 #include "LUFAConfig.h"
 #include <LUFA.h>
 #include "Joystick.h"
@@ -34,7 +33,7 @@ byte buttonStatus[14]; // Reduced to 14 since BUTTONSELECT is removed
 #define SELECT_MASK_ON 0x100
 // #define HOME_MASK_ON 0x1000
 
-#define BUTTONUP 0
+#define BUTTONUP 15
 #define BUTTONDOWN 1
 #define BUTTONLEFT 2
 #define BUTTONRIGHT 3
@@ -42,11 +41,11 @@ byte buttonStatus[14]; // Reduced to 14 since BUTTONSELECT is removed
 #define BUTTONB 5
 #define BUTTONX 6
 #define BUTTONY 7
-#define BUTTONLB 8
-#define BUTTONRB 9
-#define BUTTONLT 10
-#define BUTTONRT 11
-#define BUTTONSTART 12
+// #define BUTTONLB 8
+// #define BUTTONRB 9
+#define BUTTONLT 8
+#define BUTTONRT 14
+#define BUTTONSTART 10
 // #define BUTTONHOME 13 // Moved BUTTONHOME to 13
 
 int xAxis = 512; // Default centered value for X
@@ -97,20 +96,22 @@ void checkModeChange() {
   }
 }
 
+// Not using pin 16 
+
 void setupPins() {
-  joystickUP.attach(0, INPUT_PULLUP);
+  joystickUP.attach(15, INPUT_PULLUP);
   joystickDOWN.attach(1, INPUT_PULLUP);
   joystickLEFT.attach(2, INPUT_PULLUP);
   joystickRIGHT.attach(3, INPUT_PULLUP);
-  buttonA.attach(5, INPUT_PULLUP);
-  buttonB.attach(4, INPUT_PULLUP);
-  buttonX.attach(7, INPUT_PULLUP);
-  buttonY.attach(6, INPUT_PULLUP);
-  buttonLB.attach(9, INPUT_PULLUP);
-  buttonRB.attach(8, INPUT_PULLUP);
-  buttonLT.attach(14, INPUT_PULLUP);
-  buttonRT.attach(10, INPUT_PULLUP);
-  buttonSTART.attach(15, INPUT_PULLUP);
+  buttonA.attach(4, INPUT_PULLUP);
+  buttonB.attach(5, INPUT_PULLUP);
+  buttonX.attach(6, INPUT_PULLUP);
+  buttonY.attach(7, INPUT_PULLUP);
+  // buttonLB.attach(8, INPUT_PULLUP);
+  // buttonRB.attach(9, INPUT_PULLUP);
+  buttonLT.attach(8, INPUT_PULLUP);
+  buttonRT.attach(14, INPUT_PULLUP);
+  buttonSTART.attach(10, INPUT_PULLUP);
   // buttonHOME.attach(18, INPUT_PULLUP); // Change buttonHOME to pin 18
 
   joystickUP.interval(MILLIDEBOUNCE);
@@ -163,8 +164,8 @@ void buttonRead() {
   if (buttonB.update()) {buttonStatus[BUTTONB] = buttonB.fell();}
   if (buttonX.update()) {buttonStatus[BUTTONX] = buttonX.fell();}
   if (buttonY.update()) {buttonStatus[BUTTONY] = buttonY.fell();}
-  if (buttonLB.update()) {buttonStatus[BUTTONLB] = buttonLB.fell();}
-  if (buttonRB.update()) {buttonStatus[BUTTONRB] = buttonRB.fell();}
+  // if (buttonLB.update()) {buttonStatus[BUTTONLB] = buttonLB.fell();}
+  // if (buttonRB.update()) {buttonStatus[BUTTONRB] = buttonRB.fell();}
   if (buttonLT.update()) {buttonStatus[BUTTONLT] = buttonLT.fell();}
   if (buttonRT.update()) {buttonStatus[BUTTONRT] = buttonRT.fell();}
   if (buttonSTART.update()) {buttonStatus[BUTTONSTART] = buttonSTART.fell();}
@@ -213,6 +214,8 @@ void processRANALOG() {
 
   ReportData.RX = map(xAxis, 0, 1023, 0, 255);
   ReportData.RY = map(yAxis, 0, 1023, 0, 255);
+   // Set the LED to low to make sure it is off
+  digitalWrite(pinOBLED, HIGH);
 }
 
 void processButtons() {
@@ -222,11 +225,20 @@ void processButtons() {
       processDPAD();
       buttonProcessing();
       break;
+
+
+     // Just follow the Digital case logic supposely else this could be another bug potentially 
     case ANALOG_MODE:
       if (buttonStatus[BUTTONLT]) {processRANALOG();}
       else {processLANALOG();}
       buttonProcessing();
       break;
+
+     // The smash could potentially cause the issue with double triggering, hence, commenting out for testing: 
+     // In this case, this could be triggering too much with the input buttons, where the analog up is triggered in the same time with plus button in switch
+
+     //Seems its fully detecting the joystick up atm 
+
     case SMASH:
       if (buttonStatus[BUTTONB]) {processLANALOGSmash();}
       else {processLANALOG();}
@@ -235,29 +247,29 @@ void processButtons() {
   }
 }
 
-void buttonProcessing() {
+void buttonProcessing(){
   if (buttonStatus[BUTTONA]) {ReportData.Button |= A_MASK_ON;}
   if (buttonStatus[BUTTONB]) {ReportData.Button |= B_MASK_ON;}
   if (buttonStatus[BUTTONX]) {ReportData.Button |= X_MASK_ON;}
   if (buttonStatus[BUTTONY]) {ReportData.Button |= Y_MASK_ON;}
-  if (buttonStatus[BUTTONLB]) {ReportData.Button |= LB_MASK_ON;}
-  if (buttonStatus[BUTTONRB]) {ReportData.Button |= RB_MASK_ON;}
+  // if (buttonStatus[BUTTONLB]) {ReportData.Button |= LB_MASK_ON;}
+  // if (buttonStatus[BUTTONRB]) {ReportData.Button |= RB_MASK_ON;}
   if (buttonStatus[BUTTONLT]) {ReportData.Button |= ZL_MASK_ON;}
   if (buttonStatus[BUTTONRT]) {ReportData.Button |= ZR_MASK_ON;}
-  if (buttonStatus[BUTTONSTART]) {ReportData.Button |= START_MASK_ON;}
-  // if (buttonStatus[BUTTONHOME]) {ReportData.Button |= HOME_MASK_ON;}
+  if (buttonStatus[BUTTONSTART]){ReportData.Button |= START_MASK_ON;}
+  // if (buttonStatus[BUTTONSELECT]){ReportData.Button |= SELECT_MASK_ON;}
+  // if (buttonStatus[BUTTONHOME]){ReportData.Button |= HOME_MASK_ON;}
 }
-
-void buttonProcessingSmash() {
-  if (buttonStatus[BUTTONA]) {ReportData.Button |= X_MASK_ON;}
-  if (buttonStatus[BUTTONB]) {}
-  if (buttonStatus[BUTTONX]) {ReportData.Button |= A_MASK_ON;}
-  if (buttonStatus[BUTTONY]) {ReportData.Button |= B_MASK_ON;}
-  if (buttonStatus[BUTTONLB]) {ReportData.Button |= LB_MASK_ON;}
-  if (buttonStatus[BUTTONRB]) {ReportData.Button |= ZR_MASK_ON;}
+void buttonProcessingSmash(){
+  if (buttonStatus[BUTTONA]) {ReportData.Button |= A_MASK_ON;}
+  if (buttonStatus[BUTTONB]) {ReportData.Button |= B_MASK_ON;}
+  if (buttonStatus[BUTTONX]) {ReportData.Button |= X_MASK_ON;}
+  if (buttonStatus[BUTTONY]) {ReportData.Button |= Y_MASK_ON;}
+  // if (buttonStatus[BUTTONLB]) {ReportData.Button |= LB_MASK_ON;}
+  // if (buttonStatus[BUTTONRB]) {ReportData.Button |= RB_MASK_ON;}
   if (buttonStatus[BUTTONLT]) {ReportData.Button |= ZL_MASK_ON;}
-  if (buttonStatus[BUTTONRT]) {ReportData.Button |= RB_MASK_ON;}
-  if (buttonStatus[BUTTONSTART]) {ReportData.Button |= START_MASK_ON;}
-  // if (buttonStatus[BUTTONHOME]) {ReportData.Button |= HOME_MASK_ON;}
+  if (buttonStatus[BUTTONRT]) {ReportData.Button |= ZR_MASK_ON;}
+  if (buttonStatus[BUTTONSTART]){ReportData.Button |= START_MASK_ON;}
+  // if (buttonStatus[BUTTONSELECT]){ReportData.Button |= SELECT_MASK_ON;}
+  // if (buttonStatus[BUTTONHOME]){ReportData.Button |= HOME_MASK_ON;}
 }
-
