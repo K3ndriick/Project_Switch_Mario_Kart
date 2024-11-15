@@ -31,7 +31,7 @@ byte buttonStatus[14]; // Reduced to 14 since BUTTONSELECT is removed
 #define ZR_MASK_ON 0x80
 #define START_MASK_ON 0x200
 #define SELECT_MASK_ON 0x100
-// #define HOME_MASK_ON 0x1000
+#define HOME_MASK_ON 0x1000
 
 #define BUTTONUP 15
 #define BUTTONDOWN 1
@@ -40,13 +40,13 @@ byte buttonStatus[14]; // Reduced to 14 since BUTTONSELECT is removed
 #define BUTTONA 4
 #define BUTTONB 5
 #define BUTTONX 6
-#define BUTTONY 7
+#define BUTTONY 15
 // #define BUTTONLB 8
 // #define BUTTONRB 9
-#define BUTTONLT 8
-#define BUTTONRT 14
+#define BUTTONLT 7
+#define BUTTONRT 8
 #define BUTTONSTART 10
-// #define BUTTONHOME 13 // Moved BUTTONHOME to 13
+#define BUTTONHOME 9 // Moved BUTTONHOME to 13
 
 int xAxis = 512; // Default centered value for X
 int yAxis = 512; // Default centered value for Y
@@ -64,7 +64,7 @@ Bounce buttonRB = Bounce();
 Bounce buttonLT = Bounce();
 Bounce buttonRT = Bounce();
 Bounce buttonSTART = Bounce();
-// Bounce buttonHOME = Bounce();
+Bounce buttonHOME = Bounce();
 
 typedef enum {
   ANALOG_MODE,
@@ -106,13 +106,13 @@ void setupPins() {
   buttonA.attach(4, INPUT_PULLUP);
   buttonB.attach(5, INPUT_PULLUP);
   buttonX.attach(6, INPUT_PULLUP);
-  buttonY.attach(7, INPUT_PULLUP);
+  // buttonY.attach(7, INPUT_PULLUP);
   // buttonLB.attach(8, INPUT_PULLUP);
   // buttonRB.attach(9, INPUT_PULLUP);
-  buttonLT.attach(8, INPUT_PULLUP);
-  buttonRT.attach(14, INPUT_PULLUP);
+  buttonLT.attach(7, INPUT_PULLUP);
+  buttonRT.attach(8, INPUT_PULLUP);
   buttonSTART.attach(10, INPUT_PULLUP);
-  // buttonHOME.attach(18, INPUT_PULLUP); // Change buttonHOME to pin 18
+  buttonHOME.attach(9, INPUT_PULLUP); // Change buttonHOME to pin 18
 
   joystickUP.interval(MILLIDEBOUNCE);
   joystickDOWN.interval(MILLIDEBOUNCE);
@@ -121,13 +121,13 @@ void setupPins() {
   buttonA.interval(MILLIDEBOUNCE);
   buttonB.interval(MILLIDEBOUNCE);
   buttonX.interval(MILLIDEBOUNCE);
-  buttonY.interval(MILLIDEBOUNCE);
+  // buttonY.interval(MILLIDEBOUNCE);
   buttonLB.interval(MILLIDEBOUNCE);
   buttonRB.interval(MILLIDEBOUNCE);
   buttonLT.interval(MILLIDEBOUNCE);
   buttonRT.interval(MILLIDEBOUNCE);
   buttonSTART.interval(MILLIDEBOUNCE);
-  // buttonHOME.interval(MILLIDEBOUNCE);
+  buttonHOME.interval(MILLIDEBOUNCE);
 
   pinMode(pinOBLED, OUTPUT);
   // Set the LED to low to make sure it is off
@@ -146,7 +146,9 @@ void loop() {
   // Read the analog values from A0 and A1
   xAxis = analogRead(A0);
   yAxis = analogRead(A1);
-
+  
+  yAxis = 1023 - yAxis; 
+   
   buttonRead();
   checkModeChange();
   processButtons();
@@ -169,7 +171,7 @@ void buttonRead() {
   if (buttonLT.update()) {buttonStatus[BUTTONLT] = buttonLT.fell();}
   if (buttonRT.update()) {buttonStatus[BUTTONRT] = buttonRT.fell();}
   if (buttonSTART.update()) {buttonStatus[BUTTONSTART] = buttonSTART.fell();}
-  // if (buttonHOME.update()) {buttonStatus[BUTTONHOME] = buttonHOME.fell();}
+  if (buttonHOME.update()) {buttonStatus[BUTTONHOME] = buttonHOME.fell();}
 }
 
 void processDPAD() {
@@ -258,7 +260,7 @@ void buttonProcessing(){
   if (buttonStatus[BUTTONRT]) {ReportData.Button |= ZR_MASK_ON;}
   if (buttonStatus[BUTTONSTART]){ReportData.Button |= START_MASK_ON;}
   // if (buttonStatus[BUTTONSELECT]){ReportData.Button |= SELECT_MASK_ON;}
-  // if (buttonStatus[BUTTONHOME]){ReportData.Button |= HOME_MASK_ON;}
+  if (buttonStatus[BUTTONHOME]){ReportData.Button |= HOME_MASK_ON;}
 }
 void buttonProcessingSmash(){
   if (buttonStatus[BUTTONA]) {ReportData.Button |= A_MASK_ON;}
@@ -271,5 +273,5 @@ void buttonProcessingSmash(){
   if (buttonStatus[BUTTONRT]) {ReportData.Button |= ZR_MASK_ON;}
   if (buttonStatus[BUTTONSTART]){ReportData.Button |= START_MASK_ON;}
   // if (buttonStatus[BUTTONSELECT]){ReportData.Button |= SELECT_MASK_ON;}
-  // if (buttonStatus[BUTTONHOME]){ReportData.Button |= HOME_MASK_ON;}
+  if (buttonStatus[BUTTONHOME]){ReportData.Button |= HOME_MASK_ON;}
 }
