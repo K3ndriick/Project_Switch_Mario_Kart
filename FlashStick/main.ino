@@ -12,6 +12,17 @@ bool buttonStartBefore;
 bool buttonSelectBefore;
 byte buttonStatus[14]; // Reduced to 14 since BUTTONSELECT is removed
 
+
+/* 
+The concept to understand the Bit Mask: 
+What we trying to achive is to detect the discrypency of the button press through Bit Mask bitwise operation where in the  
+buttonProcessing() function we are checking the buttonStatus[] array and then setting the ReportData.Button with the Bit Mask value 
+
+Given we do the input pull up intially 
+
+For the Bit Mask Concept here is the official Arduino Doc that explains with example 
+https://docs.arduino.cc/learn/programming/bit-mask/ 
+*/ 
 #define DPAD_UP_MASK_ON 0x00
 #define DPAD_UPRIGHT_MASK_ON 0x01
 #define DPAD_RIGHT_MASK_ON 0x02
@@ -51,6 +62,15 @@ byte buttonStatus[14]; // Reduced to 14 since BUTTONSELECT is removed
 int xAxis = 512; // Default centered value for X
 int yAxis = 512; // Default centered value for Y
 
+
+/* 
+Please refer to the documentation of the Bounce2 Lib 
+https://github.com/thomasfredericks/Bounce2?tab=readme-ov-file#bounce
+
+From my understanding when we instantiate the Bounce class, we can perform actions such as input pull up in this case. 
+Where the we chained it with the board pin number amd the input pull up. Which is use for the button press detection 
+*/ 
+
 Bounce joystickUP = Bounce();
 Bounce joystickDOWN = Bounce();
 Bounce joystickLEFT = Bounce();
@@ -66,38 +86,7 @@ Bounce buttonRT = Bounce();
 Bounce buttonSTART = Bounce();
 Bounce buttonHOME = Bounce();
 
-typedef enum {
-  ANALOG_MODE,
-  DIGITAL,
-  SMASH
-} State_t;
-State_t state = DIGITAL;
-
-void checkModeChange() {
-  if (buttonStatus[BUTTONSTART] /*&& buttonStatus[BUTTONHOME]*/) {
-    if (buttonStartBefore == 0 && buttonSelectBefore == 0) {
-      switch (state) {
-        case DIGITAL:
-          state = ANALOG_MODE;
-          break;
-        case ANALOG_MODE:
-          state = SMASH;
-          break;
-        case SMASH:
-          state = DIGITAL;
-          break;
-      }
-      buttonStartBefore = 1;
-      buttonSelectBefore = 1;
-    }
-  } else {
-    buttonSelectBefore = 0;
-    buttonStartBefore = 0;
-  }
-}
-
 // Not using pin 16 
-
 void setupPins() {
   joystickUP.attach(15, INPUT_PULLUP);
   joystickDOWN.attach(1, INPUT_PULLUP);
@@ -141,6 +130,37 @@ void setup() {
   SetupHardware();
   GlobalInterruptEnable();
 }
+
+typedef enum {
+  ANALOG_MODE,
+  DIGITAL,
+  SMASH
+} State_t;
+State_t state = DIGITAL;
+
+void checkModeChange() {
+  if (buttonStatus[BUTTONSTART] /*&& buttonStatus[BUTTONHOME]*/) {
+    if (buttonStartBefore == 0 && buttonSelectBefore == 0) {
+      switch (state) {
+        case DIGITAL:
+          state = ANALOG_MODE;
+          break;
+        case ANALOG_MODE:
+          state = SMASH;
+          break;
+        case SMASH:
+          state = DIGITAL;
+          break;
+      }
+      buttonStartBefore = 1;
+      buttonSelectBefore = 1;
+    }
+  } else {
+    buttonSelectBefore = 0;
+    buttonStartBefore = 0;
+  }
+}
+
 
 void loop() {
   // Read the analog values from A0 and A1
@@ -228,7 +248,6 @@ void processButtons() {
       buttonProcessing();
       break;
 
-
      // Just follow the Digital case logic supposely else this could be another bug potentially 
     case ANALOG_MODE:
       if (buttonStatus[BUTTONLT]) {processRANALOG();}
@@ -249,6 +268,10 @@ void processButtons() {
   }
 }
 
+/* 
+The ReportData
+
+*/
 void buttonProcessing(){
   if (buttonStatus[BUTTONA]) {ReportData.Button |= A_MASK_ON;}
   if (buttonStatus[BUTTONB]) {ReportData.Button |= B_MASK_ON;}
@@ -262,16 +285,18 @@ void buttonProcessing(){
   // if (buttonStatus[BUTTONSELECT]){ReportData.Button |= SELECT_MASK_ON;}
   if (buttonStatus[BUTTONHOME]){ReportData.Button |= HOME_MASK_ON;}
 }
-void buttonProcessingSmash(){
-  if (buttonStatus[BUTTONA]) {ReportData.Button |= A_MASK_ON;}
-  if (buttonStatus[BUTTONB]) {ReportData.Button |= B_MASK_ON;}
-  if (buttonStatus[BUTTONX]) {ReportData.Button |= X_MASK_ON;}
-  if (buttonStatus[BUTTONY]) {ReportData.Button |= Y_MASK_ON;}
-  // if (buttonStatus[BUTTONLB]) {ReportData.Button |= LB_MASK_ON;}
-  // if (buttonStatus[BUTTONRB]) {ReportData.Button |= RB_MASK_ON;}
-  if (buttonStatus[BUTTONLT]) {ReportData.Button |= ZL_MASK_ON;}
-  if (buttonStatus[BUTTONRT]) {ReportData.Button |= ZR_MASK_ON;}
-  if (buttonStatus[BUTTONSTART]){ReportData.Button |= START_MASK_ON;}
-  // if (buttonStatus[BUTTONSELECT]){ReportData.Button |= SELECT_MASK_ON;}
-  if (buttonStatus[BUTTONHOME]){ReportData.Button |= HOME_MASK_ON;}
-}
+
+
+// void buttonProcessingSmash(){
+//   if (buttonStatus[BUTTONA]) {ReportData.Button |= A_MASK_ON;}
+//   if (buttonStatus[BUTTONB]) {ReportData.Button |= B_MASK_ON;}
+//   if (buttonStatus[BUTTONX]) {ReportData.Button |= X_MASK_ON;}
+//   if (buttonStatus[BUTTONY]) {ReportData.Button |= Y_MASK_ON;}
+//   // if (buttonStatus[BUTTONLB]) {ReportData.Button |= LB_MASK_ON;}
+//   // if (buttonStatus[BUTTONRB]) {ReportData.Button |= RB_MASK_ON;}
+//   if (buttonStatus[BUTTONLT]) {ReportData.Button |= ZL_MASK_ON;}
+//   if (buttonStatus[BUTTONRT]) {ReportData.Button |= ZR_MASK_ON;}
+//   if (buttonStatus[BUTTONSTART]){ReportData.Button |= START_MASK_ON;}
+//   // if (buttonStatus[BUTTONSELECT]){ReportData.Button |= SELECT_MASK_ON;}
+//   if (buttonStatus[BUTTONHOME]){ReportData.Button |= HOME_MASK_ON;}
+// }
