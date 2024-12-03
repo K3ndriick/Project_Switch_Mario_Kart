@@ -1,12 +1,27 @@
 # Acknowledgments
 
-We are part of the Monash Assistive Tech Team, [Project Switch](https://www.monatt.org/project-switch), a not for profit University Student Team Organization project that aims to develop a low cost high customisable Nintendo Switch Controller for all underprviliged invidivuals and gamers that suffer from physical disabilties. 
+We are part of the **Monash Assistive Tech Team**, working on [**Project Switch**](https://www.monatt.org/project-switch) — a not-for-profit university student organization project. Our mission and goal is to develop a low-cost, highly customizable **Nintendo Switch Controller** to support underprivileged individuals and gamers with physical disabilities.
 
-We reused the [CrazyRedMachines' LUFAHybridFightstick](https://github.com/CrazyRedMachine/LUFAHybridFightstick) implementation then further modified the main.ino files to cater the development assisitve single handed controller for Nintendo Switch.
+### Contributions
 
-This work is based on [fluffymadness' ATMega32U4-Switch-Fightstick](https://github.com/fluffymadness/ATMega32U4-Switch-Fightstick)
- and [bootsector's XInputPadMicro](https://github.com/bootsector/XInputPadMicro) and [CrazyRedMachines' LUFAHybridFightstick](https://github.com/CrazyRedMachine/LUFAHybridFightstick)
+This project builds on the work of the following repositories:
 
+- [**CrazyRedMachine's LUFAHybridFightstick**](https://github.com/CrazyRedMachine/LUFAHybridFightstick) - *(We modified the `main.ino` files to develop an assistive single-handed controller for the Nintendo Switch.)*  
+- [**fluffymadness' ATMega32U4-Switch-Fightstick**](https://github.com/fluffymadness/ATMega32U4-Switch-Fightstick)
+- [**bootsector's XInputPadMicro**](https://github.com/bootsector/XInputPadMicro)
+
+We deeply appreciate the contributions from all these developers and contributors, whose work made our project possible! :smile:
+
+---
+
+### Contact Us
+
+If you have any issues or inquiries about the code usage or our project, feel free to reach out:
+
+- 📧 [**Official Email**](mailto:matt@monash.edu)
+- 🌐 [**LinkedIn**](https://www.linkedin.com/company/matt-monash)
+
+---
 
 ## Switch Fightstick Code (Atmega32U4)
 
