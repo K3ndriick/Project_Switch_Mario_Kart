@@ -1,8 +1,8 @@
 # Acknowledgments
 
-We are part of the Monash Assistive Tech Team, [Project Switch](https://www.monatt.org/project-switch), a not for profit University Student Team organization project that aims to develop a low cost high customisable Nintendo Switch Controller for all underprviliged invidivuals and gamers that suffer from physical disabilties. 
+We are part of the Monash Assistive Tech Team, [Project Switch](https://www.monatt.org/project-switch), a not for profit University Student Team Organization project that aims to develop a low cost high customisable Nintendo Switch Controller for all underprviliged invidivuals and gamers that suffer from physical disabilties. 
 
-We reuse the [CrazyRedMachines' LUFAHybridFightstick](https://github.com/CrazyRedMachine/LUFAHybridFightstick) implemented then further modified the main.ino files to cater the development assisitve single handed controller for Nintendo Switch.
+We reused the [CrazyRedMachines' LUFAHybridFightstick](https://github.com/CrazyRedMachine/LUFAHybridFightstick) implementation then further modified the main.ino files to cater the development assisitve single handed controller for Nintendo Switch.
 
 This work is based on [fluffymadness' ATMega32U4-Switch-Fightstick](https://github.com/fluffymadness/ATMega32U4-Switch-Fightstick)
  and [bootsector's XInputPadMicro](https://github.com/bootsector/XInputPadMicro) and [CrazyRedMachines' LUFAHybridFightstick](https://github.com/CrazyRedMachine/LUFAHybridFightstick)
