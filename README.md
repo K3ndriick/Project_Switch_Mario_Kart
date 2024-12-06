@@ -2,7 +2,7 @@
 
 We are part of the **Monash Assistive Tech Team**, working on [**Project Switch**](https://www.monatt.org/project-switch) — a not-for-profit university student organization project. Our mission and goal is to develop a low-cost, highly customizable **Nintendo Switch Controller** to support underprivileged individuals and gamers with physical disabilities.
 
-### Contributions
+## Contributions
 
 This project builds on the work of the following repositories:
 
@@ -14,16 +14,7 @@ We deeply appreciate the contributions from all these developers and contributor
 
 ---
 
-### Contact Us
-
-If you have any issues or inquiries about the code usage or our project, feel free to reach out:
-
-- 📧 [**Official Email**](mailto:matt@monash.edu)
-- 🌐 [**LinkedIn**](https://www.linkedin.com/company/matt-monash)
-
----
-
-### Credits
+## Credits
 
 Special thanks to shinyquagsire's and progmem's reverseengineering work for the pokken tournament controller. (https://github.com/progmem/Switch-Fightstick)
 
@@ -32,3 +23,13 @@ Dean Camera for the LUFA Library
 zlittell, msf-xinput was very helpful for starting.
 
 thomasfredericks for the Bounce2Lib.
+
+---
+
+## Contact Us
+
+If you have any issues or inquiries about the code usage or our project, feel free to reach out:
+
+- 📧 [**Official Email**](mailto:matt@monash.edu)
+- 🌐 [**LinkedIn**](https://www.linkedin.com/company/matt-monash)
+
