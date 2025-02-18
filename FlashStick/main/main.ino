@@ -1,4 +1,9 @@
 // Commented out the homeButton functionality, the joystick works as intended with this version of code. 
+
+/* 
+Please refer to offical Bounce2 lib documentation page if there is any doubt about the methods being used.
+https://github.com/thomasfredericks/Bounce2
+*/ 
 #include "LUFAConfig.h"
 #include <LUFA.h>
 #include "Joystick.h"
@@ -150,6 +155,7 @@ void setup() {
 
 
 void checkModeChange() {
+  // if also seems like the buttonHome here is causing some bugs will need a deeper look later
   if (buttonStatus[BUTTONSTART] /*&& buttonStatus[BUTTONHOME]*/) {
     if (buttonStartBefore == 0 && buttonSelectBefore == 0) {
       switch (state) {
@@ -192,6 +198,19 @@ void loop() {
   USB_USBTask();
 }
 
+
+/*
+fell() and rise() are both filtered. 
+read() returns the filtered state of the input : HIGH or LOW
+fell() returns 1 if the filtered state went from HIGH to LOW since the last update. Returns 0 if not.
+Hence if we wanted to process the button state we will have to call the update method first 
+since in this case we only interested in High to Low as pressing cause voltage to drop 
+we then update the button status accordingly in order to read the correct states of the buttons that are in.
+
+As update() Updates the pin's state and because Bounce does not use interrupts,
+you have to "update" the object before reading its value and it has to be done as often as possible (that means to include it in your loop()). 
+Only call update() for each Bounce instance once per loop(). 
+*/ 
 void buttonRead() {
   if (joystickUP.update()) {buttonStatus[BUTTONUP] = joystickUP.fell();}
   if (joystickDOWN.update()) {buttonStatus[BUTTONDOWN] = joystickDOWN.fell();}
